@@ -21,13 +21,10 @@ describe Contact do
 
 
   # メールアドレスがなければ無効な状態であること
-  it "is invalid without an email address" do
-    Contact.create(
-      firstname: 'Joe', lastname: 'Tester',
-        email: 'tester'
-    )
+  it "is invalid without an email address"
+
   # 重複したメールアドレスなら無効な状態であること
-  it "is invalid with a duplicate email address"　do
+  it "is invalid with a duplicate email address" do
     Contact.create(
       firstname: 'Joe', lastname: 'Tester',
         email: 'tester@example.com')
