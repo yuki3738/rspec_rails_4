@@ -14,14 +14,16 @@ describe Contact do
   it "is invalid without a firstname" do
     expect(Contact.new(firstname: nil)).to have(1).errors_on(:firstname)
   end
+
   # 姓がなければ無効な状態であること
   it "is invalid without a lastname" do
     expect(Contact.new(lastname: nil)).to have(1).errors_on(:lastname)
   end
 
-
   # メールアドレスがなければ無効な状態であること
-  it "is invalid without an email address"
+  it "is invalid without an email address" do
+    expect(Contact.new(email: nil)).to have(1).errors_on(:email)
+  end
 
   # 重複したメールアドレスなら無効な状態であること
   it "is invalid with a duplicate email address" do
@@ -33,6 +35,7 @@ describe Contact do
         email: 'tester@example.com')
     expect(contact).to have(1).errors_on(:email)
   end
+
   # 連絡先のフルネームを文字列として返すこと
   it "returns a contact's full name as a string" do
     contact = Contact.new(firstname: 'John', lastname: 'Doe',
@@ -40,27 +43,31 @@ describe Contact do
       expect(contact.name).to eq 'John Doe'
   end
 
-  # マッチした結果をソート済の配列として返すこと
-  it "returns a sorted array if results that mathc" do
-    smith = Contact.create(firstname: 'John', lastname: 'Smith',
-      email: 'jsmith@example.com')
-    jones = Contact.create(firstname: 'Tim', lastname: 'Jones',
-      email: 'tjones@example.com')
-    johnson = Contact.create(firstname: 'John', lastname: 'Johnson',
-      email: 'jjohnson@example.com')
+  # 文字で姓をフィルタする
+  describe "filter last name by letter" do
+    before :each do
+      @smith = Contact.create(firstname: 'John', lastname: 'Smith',
+        email: 'jsmith@example.com')
+      @jones = Contact.create(firstname: 'Tim', lastname: 'Jones',
+        email: 'tjones@example.com')
+      @johnson = Contact.create(firstname: 'John', lastname: 'Johnson',
+        email: 'jjohnson@example.com')
+    end
 
-    expect(Contact.by_letter("J")).to eq [johnson, jones]
-  end
+    # マッチする文字の場合
+    context "matching letters" do
+      # マッチした結果をソート済みの配列として返すこと
+      it "returns a sorted array of results that match" do
+        expect(Contact.by_letter("J")).to eq [@johnson, @jones]
+      end
+    end
 
-  # マッチした結果をソート済の配列として返すこと
-  it "returns a sorted array if results that mathc" do
-    smith = Contact.create(firstname: 'John', lastname: 'Smith',
-      email: 'jsmith@example.com')
-    jones = Contact.create(firstname: 'Tim', lastname: 'Jones',
-      email: 'tjones@example.com')
-    johnson = Contact.create(firstname: 'John', lastname: 'Johnson',
-      email: 'jjohnson@example.com')
-
-    expect(Contact.by_letter("J")).to_not include smith
+    # マッチする文字の場合
+    context "non-matching letters" do
+      # マッチした結果をソート済みの配列として返すこと
+      it "returns a sorted array of results that match" do
+        expect(Contact.by_letter("J")).to_not include @smith
+      end
+    end
   end
 end
