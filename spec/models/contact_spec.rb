@@ -1,19 +1,10 @@
-require'spec_helper'
+require 'spec_helper'
 
 describe Contact do
   # 有効なファクトリを持つこと
   it "has a vlaid factory" do
     expect(build(:contact)).to be_valid
   end
-
-  # 姓と名とメールがあれば有効な状態であること
-  it "is valid with a firstname, lastname and email" do
-    contact = Contact.new(
-      firstname: 'Aaron',
-      lastname: 'Sumber',
-      email: 'tester@example.com')
-      expect(contact).to be_valid
-    end
 
   # 名がなければ無効な状態であること
   it "is invalid without a firstname" do
@@ -23,7 +14,7 @@ describe Contact do
 
   # 姓がなければ無効な状態であること
   it "is invalid without a lastname" do
-    ontact = build(:contact, lastname: nil)
+    contact = build(:contact, lastname: nil)
     expect(contact).to have(1).errors_on(:lastname)
   end
 
@@ -44,18 +35,22 @@ describe Contact do
   it "returns a contact's full name as a string" do
     contact = FactoryGirl.build(:contact,
       firstname: "Jane", lastname: "Doe")
-      expect(contact.name).to eq 'John Doe'
+      expect(contact.name).to eq 'Jane Doe'
+  end
+
+  it "has three phone numbers" do
+    expect(create(:contact).phones.count).to eq 3
   end
 
   # 文字で姓をフィルタする
   describe "filter last name by letter" do
     before :each do
-      @smith = Contact.create(firstname: 'John', lastname: 'Smith',
-        email: 'jsmith@example.com')
-      @jones = Contact.create(firstname: 'Tim', lastname: 'Jones',
-        email: 'tjones@example.com')
-      @johnson = Contact.create(firstname: 'John', lastname: 'Johnson',
-        email: 'jjohnson@example.com')
+      @smith = create(:contact,
+        lastname: 'Smith', email: 'jsmith@example.com')
+      @jones = create(:contact,
+        lastname: 'Jones', email: 'tjones@example.com')
+      @johnson = create(:contact,
+        lastname: 'Johnson', email: 'jjohnson@example.com')
     end
 
     # マッチする文字の場合
